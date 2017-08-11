@@ -56,6 +56,7 @@ class MainViewController: UIViewController {
             containerView.collectionView.scrollToItem(at: index, at: .top, animated: true)
         }
     }
+    
     func handleGesture(gesture: UIPanGestureRecognizer) {
         let velocity = gesture.velocity(in: self.view)
         let viewWidth = view.bounds.size.width
@@ -88,11 +89,32 @@ class MainViewController: UIViewController {
     func handleInfoPan(sender: UIPanGestureRecognizer) {
         let scrollView = containerView.collectionView
         guard scrollView.contentOffset.y + scrollView.bounds.size.height >= scrollView.contentSize.height else { return }
-        containerView.infoBackView.isHidden = false
+        let vel = sender.velocity(in: self.view)
+        let translation = sender.translation(in: self.view)
+        let isSwipe = abs(vel.y) >= GlobalVariables.virticalVelocity
+        switch sender.state {
+        case .began, .changed:
+            containerView.panGesture.isEnabled = false
+            guard isSwipe else {
+                panWithTouch(to: translation, for: containerView)
+                break
+            }
+            showCardInfoView(for: containerView)
+            break
+        case .ended, .failed, .cancelled:
+            containerView.panGesture.isEnabled = true
+            if vel.y < 0 {
+                showCardInfoView(for: containerView)
+            }else {
+                hideCardInfoView(for: containerView)
+            }
+        default:
+            break
+        }
     }
     
     func handleCloseTap(sender:UITapGestureRecognizer) {
-        if sender == containerView.tapGestrue{
+        if sender == containerView.tapGestrue && !containerView.infoBackView.isHidden{
             self.hideCardInfoView(for: containerView)
         }
     }
@@ -100,13 +122,15 @@ class MainViewController: UIViewController {
     //MARK: animations
     
     private func panWithTouch(to point: CGPoint, for view:CardView) {
+        view.infoBackView.isHidden = false
             UIView.animate(withDuration: 0.1, animations: {
                 let height = GlobalVariables.cardInfoHeaderHeight
-                let expandHeight = view.bounds.size.height
-                if let constant = view.infoHeightConstraint?.constant, (constant - point.y >= height) && (constant - point.y <= expandHeight) {
-                    view.infoHeightConstraint?.constant = height - point.y
-                    view.layoutIfNeeded()
-                }
+                let expandHeight = view.bounds.size.height / 2
+                let alp = (height - point.y) / (expandHeight - height)
+                let const = height - point.y > expandHeight ? expandHeight : height - point.y
+                view.infoBackView.alpha = alp > 0.8 ? 0.8 : alp
+                view.infoHeightConstraint?.constant = const < height ? height : const
+                view.layoutIfNeeded()
             })
     }
     private func rotate(cardView: CardView, translationPoint translation: CGPoint) {
@@ -141,26 +165,30 @@ class MainViewController: UIViewController {
     }
     
     internal func hideCardInfoView(for card:CardView) {
-        UIView.animate(withDuration: 1, delay: 0, options: .curveEaseIn, animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+            card.infoBackView.alpha = 0
             card.infoHeightConstraint?.constant = GlobalVariables.cardInfoHeaderHeight
             card.layoutIfNeeded()
         }) { (success) in
             if success {
+                card.infoBackView.isHidden = true
                 card.pageIndicator.currentPage = self.lastOnScreenPageIndex
-                card.pageIndicator.updateCurrentPageDisplay()
+                card.collectionView.panGestureRecognizer.isEnabled = true
             }
         }
     }
     
     internal func showCardInfoView(for card: CardView) {
-        UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+        card.infoBackView.isHidden = false
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
+            card.infoBackView.alpha = 0.8
             card.infoHeightConstraint?.constant = card.bounds.size.height / 2
             card.layoutIfNeeded()
         }) { (success) in
             if (card.pageIndicator.currentPage != self.cardViewModel.infoViewIndex) {
                 card.pageIndicator.currentPage = self.cardViewModel.infoViewIndex
-                card.pageIndicator.updateCurrentPageDisplay()
             }
+            card.collectionView.panGestureRecognizer.isEnabled = false
         }
     }
     
@@ -191,14 +219,3 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDelegate
         }
     }
 }
-
-//extension MainViewController: UIGestureRecognizerDelegate {
-//    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        guard let pan = gestureRecognizer as? UIPanGestureRecognizer, let otherPan = otherGestureRecognizer as? UIPanGestureRecognizer else { return false }
-//        let vel = pan.velocity(in: self.view)
-//        let vx = abs(vel.x)
-//        let vy = abs(vel.y)
-//        
-//    }
-//}
-

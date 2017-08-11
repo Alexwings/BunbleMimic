@@ -122,7 +122,7 @@ class CardView: BaseView {
     let infoBackView: UIView = {
         let v = UIView(frame: .zero)
         v.backgroundColor = UIColor.darkGray
-        v.alpha = 0.5
+        v.alpha = 0
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()

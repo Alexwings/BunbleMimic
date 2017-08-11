@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D03CCEC1F3E676B0097A066 /* testImage in Resources */ = {isa = PBXBuildFile; fileRef = 7D03CCEB1F3E676B0097A066 /* testImage */; };
 		7D5350111F328336001419E4 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5350101F328336001419E4 /* CardView.swift */; };
 		7DA9FE9A1F3277D500D2A0F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9FE991F3277D500D2A0F7 /* AppDelegate.swift */; };
 		7DA9FE9C1F3277D500D2A0F7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9FE9B1F3277D500D2A0F7 /* MainViewController.swift */; };
@@ -14,12 +15,12 @@
 		7DA9FEA41F3277D500D2A0F7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DA9FEA21F3277D500D2A0F7 /* LaunchScreen.storyboard */; };
 		7DD257581F3BCB3F00B5DF68 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DD257571F3BCB3F00B5DF68 /* QuartzCore.framework */; };
 		7DE8BC581F351C1700BA8755 /* CardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DE8BC571F351C1700BA8755 /* CardViewModel.swift */; };
-		7DFC08B51F38EA1400EF89D9 /* testImage in Resources */ = {isa = PBXBuildFile; fileRef = 7DFC08B41F38EA1400EF89D9 /* testImage */; };
 		7DFC08B71F38F00700EF89D9 /* CardViewImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFC08B61F38F00700EF89D9 /* CardViewImageCell.swift */; };
 		7DFC09511F3A2B8E00EF89D9 /* GlobalVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DFC09501F3A2B8E00EF89D9 /* GlobalVariables.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7D03CCEB1F3E676B0097A066 /* testImage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = testImage; sourceTree = "<group>"; };
 		7D5350101F328336001419E4 /* CardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		7DA9FE961F3277D500D2A0F7 /* SwipeAnimationPractice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeAnimationPractice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DA9FE991F3277D500D2A0F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -29,7 +30,6 @@
 		7DA9FEA51F3277D500D2A0F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7DD257571F3BCB3F00B5DF68 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		7DE8BC571F351C1700BA8755 /* CardViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardViewModel.swift; sourceTree = "<group>"; };
-		7DFC08B41F38EA1400EF89D9 /* testImage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = testImage; sourceTree = "<group>"; };
 		7DFC08B61F38F00700EF89D9 /* CardViewImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardViewImageCell.swift; sourceTree = "<group>"; };
 		7DFC09501F3A2B8E00EF89D9 /* GlobalVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVariables.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -80,7 +80,7 @@
 		7DA9FEAB1F327BCB00D2A0F7 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				7DFC08B41F38EA1400EF89D9 /* testImage */,
+				7D03CCEB1F3E676B0097A066 /* testImage */,
 				7DA9FEA01F3277D500D2A0F7 /* Assets.xcassets */,
 				7DA9FEA21F3277D500D2A0F7 /* LaunchScreen.storyboard */,
 				7DA9FEA51F3277D500D2A0F7 /* Info.plist */,
@@ -157,9 +157,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D03CCEC1F3E676B0097A066 /* testImage in Resources */,
 				7DA9FEA41F3277D500D2A0F7 /* LaunchScreen.storyboard in Resources */,
 				7DA9FEA11F3277D500D2A0F7 /* Assets.xcassets in Resources */,
-				7DFC08B51F38EA1400EF89D9 /* testImage in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

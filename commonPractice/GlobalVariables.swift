@@ -19,5 +19,5 @@ struct GlobalVariables {
     static let cardCornerRadius: CGFloat = 30
     static let cardInfoHeaderHeight: CGFloat = 80
     static let dismissVelocity: CGFloat = 3000
-    static let virticalVelocity: CGFloat = 2000
+    static let virticalVelocity: CGFloat = 1000
 }
