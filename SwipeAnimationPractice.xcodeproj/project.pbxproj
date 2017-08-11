@@ -21,7 +21,7 @@
 
 /* Begin PBXFileReference section */
 		7D5350101F328336001419E4 /* CardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
-		7DA9FE961F3277D500D2A0F7 /* commonPractice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = commonPractice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7DA9FE961F3277D500D2A0F7 /* SwipeAnimationPractice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeAnimationPractice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DA9FE991F3277D500D2A0F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7DA9FE9B1F3277D500D2A0F7 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		7DA9FEA01F3277D500D2A0F7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,7 +49,7 @@
 		7DA9FE8D1F3277D500D2A0F7 = {
 			isa = PBXGroup;
 			children = (
-				7DA9FE981F3277D500D2A0F7 /* commonPractice */,
+				7DA9FE981F3277D500D2A0F7 /* SwipeAnimationPractice */,
 				7DA9FE971F3277D500D2A0F7 /* Products */,
 				7DD257561F3BCB3F00B5DF68 /* Frameworks */,
 			);
@@ -58,12 +58,12 @@
 		7DA9FE971F3277D500D2A0F7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7DA9FE961F3277D500D2A0F7 /* commonPractice.app */,
+				7DA9FE961F3277D500D2A0F7 /* SwipeAnimationPractice.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7DA9FE981F3277D500D2A0F7 /* commonPractice */ = {
+		7DA9FE981F3277D500D2A0F7 /* SwipeAnimationPractice */ = {
 			isa = PBXGroup;
 			children = (
 				7DA9FE991F3277D500D2A0F7 /* AppDelegate.swift */,
@@ -73,6 +73,7 @@
 				7DFC08B61F38F00700EF89D9 /* CardViewImageCell.swift */,
 				7DA9FEAB1F327BCB00D2A0F7 /* Support Files */,
 			);
+			name = SwipeAnimationPractice;
 			path = commonPractice;
 			sourceTree = "<group>";
 		};
@@ -99,9 +100,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7DA9FE951F3277D500D2A0F7 /* commonPractice */ = {
+		7DA9FE951F3277D500D2A0F7 /* SwipeAnimationPractice */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7DA9FEA81F3277D500D2A0F7 /* Build configuration list for PBXNativeTarget "commonPractice" */;
+			buildConfigurationList = 7DA9FEA81F3277D500D2A0F7 /* Build configuration list for PBXNativeTarget "SwipeAnimationPractice" */;
 			buildPhases = (
 				7DA9FE921F3277D500D2A0F7 /* Sources */,
 				7DA9FE931F3277D500D2A0F7 /* Frameworks */,
@@ -111,9 +112,9 @@
 			);
 			dependencies = (
 			);
-			name = commonPractice;
+			name = SwipeAnimationPractice;
 			productName = commonPractice;
-			productReference = 7DA9FE961F3277D500D2A0F7 /* commonPractice.app */;
+			productReference = 7DA9FE961F3277D500D2A0F7 /* SwipeAnimationPractice.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -133,7 +134,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7DA9FE911F3277D500D2A0F7 /* Build configuration list for PBXProject "commonPractice" */;
+			buildConfigurationList = 7DA9FE911F3277D500D2A0F7 /* Build configuration list for PBXProject "SwipeAnimationPractice" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -146,7 +147,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7DA9FE951F3277D500D2A0F7 /* commonPractice */,
+				7DA9FE951F3277D500D2A0F7 /* SwipeAnimationPractice */,
 			);
 		};
 /* End PBXProject section */
@@ -293,7 +294,7 @@
 				DEVELOPMENT_TEAM = 9D66GMA8D3;
 				INFOPLIST_FILE = commonPractice/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.commonPractice;
+				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.SwipeAnimationPractice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
@@ -308,7 +309,7 @@
 				DEVELOPMENT_TEAM = 9D66GMA8D3;
 				INFOPLIST_FILE = commonPractice/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.commonPractice;
+				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.SwipeAnimationPractice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
@@ -318,7 +319,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7DA9FE911F3277D500D2A0F7 /* Build configuration list for PBXProject "commonPractice" */ = {
+		7DA9FE911F3277D500D2A0F7 /* Build configuration list for PBXProject "SwipeAnimationPractice" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7DA9FEA61F3277D500D2A0F7 /* Debug */,
@@ -327,7 +328,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7DA9FEA81F3277D500D2A0F7 /* Build configuration list for PBXNativeTarget "commonPractice" */ = {
+		7DA9FEA81F3277D500D2A0F7 /* Build configuration list for PBXNativeTarget "SwipeAnimationPractice" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7DA9FEA91F3277D500D2A0F7 /* Debug */,
