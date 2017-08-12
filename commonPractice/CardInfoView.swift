@@ -9,24 +9,46 @@
 import UIKit
 
 class CardInfoView: BaseView {
-    
-    let table: UITableView = {
-        let t = UITableView(frame: .zero)
-        t.allowsSelection = false
-        return t
+    let albumName: UITextField = {
+        let txt = UITextField(frame: .zero)
+        txt.textAlignment = .center
+        txt.text = "Hello World!"
+        txt.isEnabled = false
+        txt.translatesAutoresizingMaskIntoConstraints = false
+        return txt
     }()
     
+    let timeLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        let dfmt = DateFormatter()
+        dfmt.dateFormat = "yyyy-MM-dd"
+        label.text = dfmt.string(from: Date())
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let doubleTapGesture: UITapGestureRecognizer = {
+        let dtp = UITapGestureRecognizer()
+        dtp.numberOfTapsRequired = 2
+        return dtp
+    }()
+    
+    var headerStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.distribution = .fillProportionally
+        stack.alignment = .center
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
     override func setupViews() {
-        backgroundColor = UIColor.clear
-        addSubview(table)
-        table.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        table.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        table.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        table.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        table.dataSource =
+        backgroundColor = UIColor.lightGray
+        addSubview(headerStack)
+        headerStack.addArrangedSubview(albumName)
+        headerStack.addArrangedSubview(timeLabel)
+        headerStack.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        headerStack.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        headerStack.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        headerStack.heightAnchor.constraint(equalToConstant: GlobalVariables.cardInfoHeaderHeight).isActive = true
     }
-}
-
-class CardInfoModel: NSObject {
-    convenience init(
 }

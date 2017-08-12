@@ -43,19 +43,9 @@ class MainViewController: UIViewController {
         containerView.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
         containerView.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
         containerView.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
-        containerView.pageIndicator.numberOfPages = cardViewModel.dataSource.count + 1
-        containerView.pageIndicator.addTarget(self, action: #selector(handlePageValueChanged(_:)), for: .valueChanged)
     }
     
     //MARK: action related methods
-    
-    func handlePageValueChanged(_ page: UIPageControl) {
-        if page.currentPage < cardViewModel.dataSource.count {
-            let index = IndexPath(item: page.currentPage, section: 0)
-            lastOnScreenPageIndex = page.currentPage
-            containerView.collectionView.scrollToItem(at: index, at: .top, animated: true)
-        }
-    }
     
     func handleGesture(gesture: UIPanGestureRecognizer) {
         let velocity = gesture.velocity(in: self.view)
@@ -172,7 +162,6 @@ class MainViewController: UIViewController {
         }) { (success) in
             if success {
                 card.infoBackView.isHidden = true
-                card.pageIndicator.currentPage = self.lastOnScreenPageIndex
                 card.collectionView.panGestureRecognizer.isEnabled = true
             }
         }
@@ -185,13 +174,9 @@ class MainViewController: UIViewController {
             card.infoHeightConstraint?.constant = card.bounds.size.height / 2
             card.layoutIfNeeded()
         }) { (success) in
-            if (card.pageIndicator.currentPage != self.cardViewModel.infoViewIndex) {
-                card.pageIndicator.currentPage = self.cardViewModel.infoViewIndex
-            }
             card.collectionView.panGestureRecognizer.isEnabled = false
         }
     }
-    
 }
 
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
@@ -204,13 +189,6 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
-    
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        self.containerView.pageIndicator.currentPage = indexPath.item
-        self.lastOnScreenPageIndex = indexPath.item
-        self.containerView.pageIndicator.updateCurrentPageDisplay()
-    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView.contentOffset.y + scrollView.bounds.size.height >= scrollView.contentSize.height) {
             scrollView.bounces = false
