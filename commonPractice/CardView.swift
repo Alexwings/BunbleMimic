@@ -97,12 +97,6 @@ class CardView: BaseView {
         pg.maximumNumberOfTouches = 1
         return pg
     }()
-//    var infoPanGesture: UIPanGestureRecognizer = {
-//        let pg = UIPanGestureRecognizer()
-//        pg.minimumNumberOfTouches = 1
-//        pg.maximumNumberOfTouches = 1
-//        return pg
-//    }()
     
     var tapGestrue: UITapGestureRecognizer = {
         let tap = UITapGestureRecognizer()

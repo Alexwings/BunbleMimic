@@ -33,7 +33,7 @@ class CardViewImageCell: UICollectionViewCell {
        let img = UIImageView()
         img.frame = CGRect.zero
         img.translatesAutoresizingMaskIntoConstraints = false
-        img.contentMode = .scaleAspectFill
+        img.contentMode = .scaleAspectFit
         return img
     }()
 }
