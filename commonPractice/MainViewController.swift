@@ -15,12 +15,11 @@ enum CellTypes: String {
 
 class MainViewController: UIViewController {
     
-    let containerView = CardView(frame: CGRect.zero)
-    
+    var frontView = CardView(frame: CGRect.zero)
     let cardViewModel = CardViewModel()
     
-    var lastOnScreenPageIndex: Int = 0
-
+    var backView = CardView(frame: .zero)
+    
     //MARK: Controller Life Cycle related methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,74 +28,90 @@ class MainViewController: UIViewController {
     }
 
     private func setupLayouts() {
-        view.addSubview(containerView)
-        containerView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: GlobalVariables.CardViewIntervals.top.rawValue).isActive = true
-        containerView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: GlobalVariables.CardViewIntervals.left.rawValue).isActive = true
-        containerView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: GlobalVariables.CardViewIntervals.right.rawValue).isActive = true
-        containerView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: GlobalVariables.CardViewIntervals.bottom.rawValue).isActive = true
         
-        containerView.collectionView.dataSource = self.cardViewModel
-        containerView.collectionView.delegate = self
+        view.addSubview(backView)
+        backView.alpha = 0
+        backView.collectionView.backgroundColor = UIColor.blue
+        
+        backView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: GlobalVariables.CardViewIntervals.top.rawValue).isActive = true
+        backView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: GlobalVariables.CardViewIntervals.left.rawValue).isActive = true
+        backView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: GlobalVariables.CardViewIntervals.right.rawValue).isActive = true
+        backView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: GlobalVariables.CardViewIntervals.bottom.rawValue).isActive = true
+        
+        view.addSubview(frontView)
+        frontView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: GlobalVariables.CardViewIntervals.top.rawValue).isActive = true
+        frontView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: GlobalVariables.CardViewIntervals.left.rawValue).isActive = true
+        frontView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: GlobalVariables.CardViewIntervals.right.rawValue).isActive = true
+        frontView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: GlobalVariables.CardViewIntervals.bottom.rawValue).isActive = true
+        //153, 219, 210
+        frontView.backgroundColor = UIColor(red: 153/255, green: 219/255, blue: 210, alpha: 1)
     }
     
     private func setupViews() {
-        containerView.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
-        containerView.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
-        containerView.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
+        frontView.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
+        frontView.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
+        frontView.infoView.doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
+        frontView.infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
+        frontView.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
+        
+        frontView.collectionView.dataSource = self.cardViewModel
+        frontView.collectionView.delegate = self
     }
     
     //MARK: action related methods
     
     func handleGesture(gesture: UIPanGestureRecognizer) {
         let velocity = gesture.velocity(in: self.view)
-        let viewWidth = view.bounds.size.width
-        let virticalDismissline: CGFloat = viewWidth * GlobalVariables.dismissLineFactor
-        let rotateAnimation: ()->Void = {[unowned self] in
-            switch gesture.state {
-            case .began:
-                break
-            case .changed:
-                let isSwipe = abs(velocity.x) >= GlobalVariables.dismissVelocity
-                let isOKToDismiss = self.containerView.center.x >= viewWidth - virticalDismissline || self.containerView.center.x <= virticalDismissline
-                
-                if isSwipe || isOKToDismiss {
-                    self.rotateToDismiss(cardView: self.containerView, toRight: velocity.x > 0)
-                }else {
-                    self.rotate(cardView: self.containerView, translationPoint: gesture.translation(in: self.view))
+        let size = view.bounds.size
+        let translation = gesture.translation(in: self.view)
+        let isSwipe = abs(velocity.x) >= GlobalVariables.dismissVelocity
+        let isOKToDismiss = abs(atan(translation.x / size.height)) > abs(atan(size.width / (2 * size.height)))
+        switch gesture.state {
+        case .began:
+            break
+        case .changed:
+            
+            self.rotate(cardView: self.frontView, translationPoint: translation)
+            break
+        case .ended, .cancelled, .failed:
+            if !isSwipe && !isOKToDismiss {
+                self.rotate(cardView: self.frontView, translationPoint: CGPoint(x: 0, y: 0))
+            }else {
+                let angle = atan(frontView.center.x / size.height)
+                if abs(angle) < (CGFloat.pi / 2) {
+                    UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
+                        self.frontView.transform = CGAffineTransform(rotationAngle: angle > 0 ? (CGFloat.pi / 4): -(CGFloat.pi / 4))
+                        self.frontView.center.x = angle > 0 ? size.width + size.height / 2 : 0 - size.height / 2
+                    }, completion: nil)
                 }
-                break
-            case .ended, .cancelled, .failed:
-                self.rotate(cardView: self.containerView, translationPoint: CGPoint(x: 0, y: 0))
-                self.containerView.transform = CGAffineTransform.identity
-                break
-            default:
-                break
             }
+            break
+        default:
+            break
         }
-        rotateAnimation()
     }
     
     func handleInfoPan(sender: UIPanGestureRecognizer) {
-        let scrollView = containerView.collectionView
+        let scrollView = frontView.collectionView
         guard scrollView.contentOffset.y + scrollView.bounds.size.height >= scrollView.contentSize.height else { return }
         let vel = sender.velocity(in: self.view)
         let translation = sender.translation(in: self.view)
         let isSwipe = abs(vel.y) >= GlobalVariables.virticalVelocity
         switch sender.state {
         case .began, .changed:
-            containerView.panGesture.isEnabled = false
+            frontView.panGesture.isEnabled = false
             guard isSwipe else {
-                panWithTouch(to: translation, for: containerView)
+                panWithTouch(to: translation, for: frontView)
                 break
             }
-            showCardInfoView(for: containerView)
+            showCardInfoView(for: frontView)
             break
         case .ended, .failed, .cancelled:
-            containerView.panGesture.isEnabled = true
+            frontView.panGesture.isEnabled = true
             if vel.y < 0 {
-                showCardInfoView(for: containerView)
+                showCardInfoView(for: frontView)
             }else {
-                hideCardInfoView(for: containerView)
+                hideCardInfoView(for: frontView)
             }
         default:
             break
@@ -104,11 +119,27 @@ class MainViewController: UIViewController {
     }
     
     func handleCloseTap(sender:UITapGestureRecognizer) {
-        if sender == containerView.tapGestrue && !containerView.infoBackView.isHidden{
-            self.hideCardInfoView(for: containerView)
+        if sender == frontView.tapGestrue && !frontView.infoBackView.isHidden{
+            self.hideCardInfoView(for: frontView)
+        }
+    }
+    func handleOpenTap(sender:UITapGestureRecognizer) {
+        if sender == frontView.infoView.singleTapGuesture{
+            if frontView.infoBackView.isHidden {
+                self.showCardInfoView(for: frontView)
+            }else {
+                self.hideCardInfoView(for: frontView)
+            }
         }
     }
     
+    @objc func enableTextField(sender: UITapGestureRecognizer) {
+        guard sender.numberOfTapsRequired == 2 else { return }
+        frontView.infoView.albumName.isEnabled = !frontView.infoView.albumName.isEnabled
+        if frontView.infoView.albumName.isEnabled {
+            frontView.infoView.albumName.becomeFirstResponder()
+        }
+    }
     //MARK: animations
     
     private func panWithTouch(to point: CGPoint, for view:CardView) {
@@ -123,35 +154,20 @@ class MainViewController: UIViewController {
                 view.layoutIfNeeded()
             })
     }
+    
     private func rotate(cardView: CardView, translationPoint translation: CGPoint) {
-        let y = self.view.bounds.size.height
-        let centerX = self.view.center.x
-        //            let locationX = gesture.location(in: self.view).x
-        UIView.animate(withDuration: 0.1, animations: {
-            let rotate = CGAffineTransform(rotationAngle: atan(translation.x / y))
-            cardView.transform = rotate
-            cardView.center.x = centerX + translation.x
-        })
+        let angle = atan(translation.x / self.view.bounds.size.height)
+            let rotate = CGAffineTransform(rotationAngle: angle)
+            UIView.animate(withDuration: 0.1) {
+                cardView.transform = rotate
+                cardView.center.x = self.view.center.x + translation.x
+            }
     }
     
-    private func rotateToDismiss(cardView view:CardView, toRight:Bool ) {
-        let y = self.view.bounds.size.height
-        let x = self.view.bounds.size.width / 2
-        let angle = toRight ? atan(x / y) : (0 - atan(x / y))
-        let movingDistance = toRight ? self.view.bounds.size.width - view.center.x : 0 - view.center.x
-        let rotate = CGAffineTransform(rotationAngle: angle)
-        let translate = CGAffineTransform(translationX: movingDistance, y: 0)
-        UIView.animate(withDuration: 0.1, animations: {
-            view.transform = translate.concatenating(rotate)
-            view.alpha = 0
-            view.isHidden = true
-        }) {[unowned self] (finish) in
-            if finish {
-                view.transform = CGAffineTransform.identity
-                view.center = self.view.center
-                view.alpha = 1
-            }
-        }
+    private func swapViews(_ view1: inout CardView, _ view2: inout CardView) {
+        let tmp = view1;
+        view1 = view2
+        view2 = tmp
     }
     
     internal func hideCardInfoView(for card:CardView) {
@@ -181,7 +197,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return containerView.frame.size
+        return frontView.frame.size
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
