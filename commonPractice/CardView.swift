@@ -29,7 +29,7 @@ class CardView: BaseView {
         clipsToBounds = true
         addGestureRecognizer(panGesture)
         addGestureRecognizer(tapGestrue)
-        tapGestrue.require(toFail: doubleTap)
+        tapGestrue.require(toFail: infoView.doubleTap)
         
         collectionView.backgroundColor = UIColor.clear
         addSubview(collectionView)
@@ -46,14 +46,12 @@ class CardView: BaseView {
         infoBackView.isHidden = true
         
         addSubview(infoView)
-        infoView.headerStack.addGestureRecognizer(doubleTap)
         infoView.trailingAnchor.constraint(equalTo: trailingAnchor,constant: GlobalVariables.CardViewIntervals.right.rawValue).isActive = true
         infoView.leadingAnchor.constraint(equalTo: leadingAnchor,constant: GlobalVariables.CardViewIntervals.left.rawValue).isActive = true
         infoView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: GlobalVariables.CardViewIntervals.right.rawValue).isActive = true
         infoHeightConstraint = infoView.heightAnchor.constraint(equalToConstant: GlobalVariables.cardInfoHeaderHeight)
         infoHeightConstraint?.isActive = true
         
-        doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
         
     }
     
@@ -61,14 +59,7 @@ class CardView: BaseView {
     
     var infoHeightConstraint: NSLayoutConstraint?
     
-    //MARK: action methods
-    @objc func enableTextField(sender: UITapGestureRecognizer) {
-        guard sender.numberOfTapsRequired == 2 else { return }
-        infoView.albumName.isEnabled = !infoView.albumName.isEnabled
-        if infoView.albumName.isEnabled {
-            infoView.albumName.becomeFirstResponder()
-        }
-    }
+    
     
     //MARK: views
     let collectionView: UICollectionView = {
@@ -98,11 +89,7 @@ class CardView: BaseView {
         return tap
     }()
     
-    var doubleTap: UITapGestureRecognizer = {
-        let tap = UITapGestureRecognizer()
-        tap.numberOfTapsRequired = 2
-        return tap
-    }()
+   
     
     let infoView: CardInfoView = {
         let view = CardInfoView(frame: .zero)

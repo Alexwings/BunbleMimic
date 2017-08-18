@@ -33,6 +33,18 @@ class CardInfoView: BaseView {
         return dtp
     }()
     
+    let singleTapGuesture: UITapGestureRecognizer = {
+        let stp = UITapGestureRecognizer()
+        stp.numberOfTapsRequired = 1
+        return stp
+    }()
+    
+    var doubleTap: UITapGestureRecognizer = {
+        let tap = UITapGestureRecognizer()
+        tap.numberOfTapsRequired = 2
+        return tap
+    }()
+    
     var headerStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -50,5 +62,9 @@ class CardInfoView: BaseView {
         headerStack.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
         headerStack.topAnchor.constraint(equalTo: topAnchor).isActive = true
         headerStack.heightAnchor.constraint(equalToConstant: GlobalVariables.cardInfoHeaderHeight).isActive = true
+        
+        addGestureRecognizer(singleTapGuesture)
+        singleTapGuesture.require(toFail: doubleTap)
+        headerStack.addGestureRecognizer(doubleTap)
     }
 }
