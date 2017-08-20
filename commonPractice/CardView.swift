@@ -59,6 +59,18 @@ class CardView: BaseView {
     
     var infoHeightConstraint: NSLayoutConstraint?
     
+    //MARK: Signals
+    
+    var functionEnabled: Bool = true {
+        didSet {
+            guard functionEnabled != oldValue else { return }
+            self.panGesture.isEnabled = functionEnabled
+            self.tapGestrue.isEnabled = functionEnabled
+            self.infoView.doubleTap.isEnabled = functionEnabled
+            self.infoView.singleTapGuesture.isEnabled = functionEnabled
+        }
+    }
+    
     
     
     //MARK: views

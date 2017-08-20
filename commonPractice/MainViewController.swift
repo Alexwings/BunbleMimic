@@ -13,24 +13,41 @@ enum CellTypes: String {
     case imageCell = "imageCell"
 }
 
+enum CardZPosition: CGFloat {
+    case back = 0, front = 1
+}
+
 class MainViewController: UIViewController {
     
-    var frontView = CardView(frame: CGRect.zero)
+    var frontView: CardView = CardView(frame: .zero)
+    
     let cardViewModel = CardViewModel()
     
-    var backView = CardView(frame: .zero)
+    var backView: CardView = CardView(frame: .zero)
+    
+    var currentDisplayView: CardView? {
+        didSet {
+            guard currentDisplayView != oldValue, let display = currentDisplayView else { return }
+            let back = self.cardView(under: display)
+            display.alpha = 1
+            display.functionEnabled = true
+            back.functionEnabled = false
+            display.layer.zPosition = CardZPosition.front.rawValue
+            back.layer.zPosition = CardZPosition.back.rawValue
+        }
+    }
     
     //MARK: Controller Life Cycle related methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayouts()
         setupViews()
+        currentDisplayView = frontView
     }
 
     private func setupLayouts() {
         
         view.addSubview(backView)
-        backView.alpha = 0
         backView.collectionView.backgroundColor = UIColor.blue
         
         backView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: GlobalVariables.CardViewIntervals.top.rawValue).isActive = true
@@ -53,14 +70,30 @@ class MainViewController: UIViewController {
         frontView.infoView.doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
         frontView.infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
         frontView.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
-        
         frontView.collectionView.dataSource = self.cardViewModel
         frontView.collectionView.delegate = self
+        frontView.functionEnabled = false
+        frontView.alpha = 0
+        frontView.collectionView.tag = 1
+        
+        backView.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
+        backView.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
+        backView.infoView.doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
+        backView.infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
+        backView.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
+        
+        backView.collectionView.dataSource = self.cardViewModel
+        backView.collectionView.delegate = self
+        backView.functionEnabled = false
+        backView.alpha = 0
+        backView.collectionView.tag = 2
     }
     
     //MARK: action related methods
     
     func handleGesture(gesture: UIPanGestureRecognizer) {
+        guard let display = currentDisplayView else { return }
+        let viewOnTheBack = self.cardView(under: display)
         let velocity = gesture.velocity(in: self.view)
         let size = view.bounds.size
         let translation = gesture.translation(in: self.view)
@@ -71,18 +104,24 @@ class MainViewController: UIViewController {
             break
         case .changed:
             
-            self.rotate(cardView: self.frontView, translationPoint: translation)
+            self.rotate(cardView: display, translationPoint: translation)
             break
         case .ended, .cancelled, .failed:
             if !isSwipe && !isOKToDismiss {
-                self.rotate(cardView: self.frontView, translationPoint: CGPoint(x: 0, y: 0))
+                self.rotate(cardView: display, translationPoint: CGPoint(x: 0, y: 0))
             }else {
-                let angle = atan(frontView.center.x / size.height)
+                let angle = atan(display.center.x / size.height)
                 if abs(angle) < (CGFloat.pi / 2) {
                     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
-                        self.frontView.transform = CGAffineTransform(rotationAngle: angle > 0 ? (CGFloat.pi / 4): -(CGFloat.pi / 4))
-                        self.frontView.center.x = angle > 0 ? size.width + size.height / 2 : 0 - size.height / 2
-                    }, completion: nil)
+                        display.transform = CGAffineTransform(rotationAngle: angle > 0 ? (CGFloat.pi / 4): -(CGFloat.pi / 4))
+                        display.center.x = angle > 0 ? size.width + size.height / 2 : 0 - size.height / 2
+                    }, completion: {
+                        if $0 {
+                            display.transform = CGAffineTransform.identity
+                            display.center = viewOnTheBack.center
+                            self.currentDisplayView = self.cardView(under: display)
+                        }
+                    })
                 }
             }
             break
@@ -92,26 +131,27 @@ class MainViewController: UIViewController {
     }
     
     func handleInfoPan(sender: UIPanGestureRecognizer) {
-        let scrollView = frontView.collectionView
+        guard let display = currentDisplayView else { return }
+        let scrollView = display.collectionView
         guard scrollView.contentOffset.y + scrollView.bounds.size.height >= scrollView.contentSize.height else { return }
         let vel = sender.velocity(in: self.view)
         let translation = sender.translation(in: self.view)
         let isSwipe = abs(vel.y) >= GlobalVariables.virticalVelocity
         switch sender.state {
         case .began, .changed:
-            frontView.panGesture.isEnabled = false
+            display.panGesture.isEnabled = false
             guard isSwipe else {
-                panWithTouch(to: translation, for: frontView)
+                panWithTouch(to: translation, for: display)
                 break
             }
-            showCardInfoView(for: frontView)
+            showCardInfoView(for: display)
             break
         case .ended, .failed, .cancelled:
-            frontView.panGesture.isEnabled = true
+            display.panGesture.isEnabled = true
             if vel.y < 0 {
-                showCardInfoView(for: frontView)
+                showCardInfoView(for: display)
             }else {
-                hideCardInfoView(for: frontView)
+                hideCardInfoView(for: display)
             }
         default:
             break
@@ -119,25 +159,28 @@ class MainViewController: UIViewController {
     }
     
     func handleCloseTap(sender:UITapGestureRecognizer) {
-        if sender == frontView.tapGestrue && !frontView.infoBackView.isHidden{
-            self.hideCardInfoView(for: frontView)
+        guard let display = currentDisplayView else { return }
+        if sender == display.tapGestrue && !display.infoBackView.isHidden{
+            self.hideCardInfoView(for: display)
         }
     }
     func handleOpenTap(sender:UITapGestureRecognizer) {
-        if sender == frontView.infoView.singleTapGuesture{
-            if frontView.infoBackView.isHidden {
-                self.showCardInfoView(for: frontView)
+        guard let display = currentDisplayView else { return }
+        if sender == display.infoView.singleTapGuesture{
+            if display.infoBackView.isHidden {
+                self.showCardInfoView(for: display)
             }else {
-                self.hideCardInfoView(for: frontView)
+                self.hideCardInfoView(for: display)
             }
         }
     }
     
     @objc func enableTextField(sender: UITapGestureRecognizer) {
+        guard let display = currentDisplayView else { return }
         guard sender.numberOfTapsRequired == 2 else { return }
-        frontView.infoView.albumName.isEnabled = !frontView.infoView.albumName.isEnabled
-        if frontView.infoView.albumName.isEnabled {
-            frontView.infoView.albumName.becomeFirstResponder()
+        display.infoView.albumName.isEnabled = !display.infoView.albumName.isEnabled
+        if display.infoView.albumName.isEnabled {
+            display.infoView.albumName.becomeFirstResponder()
         }
     }
     //MARK: animations
@@ -157,17 +200,13 @@ class MainViewController: UIViewController {
     
     private func rotate(cardView: CardView, translationPoint translation: CGPoint) {
         let angle = atan(translation.x / self.view.bounds.size.height)
-            let rotate = CGAffineTransform(rotationAngle: angle)
-            UIView.animate(withDuration: 0.1) {
-                cardView.transform = rotate
-                cardView.center.x = self.view.center.x + translation.x
-            }
-    }
-    
-    private func swapViews(_ view1: inout CardView, _ view2: inout CardView) {
-        let tmp = view1;
-        view1 = view2
-        view2 = tmp
+        let viewOntheBack = self.cardView(under: cardView)
+        let rotate = CGAffineTransform(rotationAngle: angle)
+        UIView.animate(withDuration: 0.1) {
+            cardView.transform = rotate
+            cardView.center.x = self.view.center.x + translation.x
+            viewOntheBack.alpha = abs(translation.x) / self.view.bounds.size.width
+        }
     }
     
     internal func hideCardInfoView(for card:CardView) {
@@ -193,11 +232,16 @@ class MainViewController: UIViewController {
             card.collectionView.panGestureRecognizer.isEnabled = false
         }
     }
+    
+    //Helper methods
+    private func cardView(under card: CardView) -> CardView {
+        return card == frontView ? backView : frontView
+    }
 }
 
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return frontView.frame.size
+        return collectionView.bounds.size
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
