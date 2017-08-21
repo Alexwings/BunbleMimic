@@ -30,10 +30,12 @@ class MainViewController: UIViewController {
             guard currentDisplayView != oldValue, let display = currentDisplayView else { return }
             let back = self.cardView(under: display)
             display.alpha = 1
+            
+            enableGestures(for: display)
             display.functionEnabled = true
+            
+            disableGestures(for: back)
             back.functionEnabled = false
-            display.layer.zPosition = CardZPosition.front.rawValue
-            back.layer.zPosition = CardZPosition.back.rawValue
         }
     }
     
@@ -65,22 +67,11 @@ class MainViewController: UIViewController {
     }
     
     private func setupViews() {
-        frontView.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
-        frontView.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
-        frontView.infoView.doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
-        frontView.infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
-        frontView.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
         frontView.collectionView.dataSource = self.cardViewModel
         frontView.collectionView.delegate = self
         frontView.functionEnabled = false
         frontView.alpha = 0
         frontView.collectionView.tag = 1
-        
-        backView.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
-        backView.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
-        backView.infoView.doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
-        backView.infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
-        backView.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
         
         backView.collectionView.dataSource = self.cardViewModel
         backView.collectionView.delegate = self
@@ -119,7 +110,9 @@ class MainViewController: UIViewController {
                         if $0 {
                             display.transform = CGAffineTransform.identity
                             display.center = viewOnTheBack.center
-                            self.currentDisplayView = self.cardView(under: display)
+                            
+                            self.view.insertSubview(display, belowSubview: viewOnTheBack)
+                            self.currentDisplayView = viewOnTheBack
                         }
                     })
                 }
@@ -182,6 +175,25 @@ class MainViewController: UIViewController {
         if display.infoView.albumName.isEnabled {
             display.infoView.albumName.becomeFirstResponder()
         }
+    }
+    //MARK: Private helper methods
+    
+    private func disableGestures(for card: CardView?) {
+        guard let card = card else { return }
+        card.panGesture.removeTarget(self, action: #selector(handleGesture(gesture:)))
+        card.tapGestrue.removeTarget(self, action: #selector(handleCloseTap(sender:)))
+        card.infoView.doubleTap.removeTarget(self, action: #selector(enableTextField(sender:)))
+        card.infoView.singleTapGuesture.removeTarget(self, action: #selector(handleOpenTap(sender:)))
+        card.collectionView.panGestureRecognizer.removeTarget(self, action: #selector(handleInfoPan(sender:)))
+    }
+    
+    private func enableGestures(for card: CardView?) {
+        guard let card = card else { return }
+        card.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
+        card.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
+        card.infoView.doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
+        card.infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
+        card.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
     }
     //MARK: animations
     
@@ -255,5 +267,11 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDelegate
         }else {
             scrollView.bounces = true
         }
+    }
+}
+
+extension UICollectionViewFlowLayout {
+    override open func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return true
     }
 }

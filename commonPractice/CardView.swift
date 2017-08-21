@@ -68,6 +68,7 @@ class CardView: BaseView {
             self.tapGestrue.isEnabled = functionEnabled
             self.infoView.doubleTap.isEnabled = functionEnabled
             self.infoView.singleTapGuesture.isEnabled = functionEnabled
+            self.collectionView.panGestureRecognizer.isEnabled = functionEnabled
         }
     }
     
