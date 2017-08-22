@@ -21,8 +21,6 @@ class MainViewController: UIViewController {
     
     var frontView: CardView = CardView(frame: .zero)
     
-    let cardViewModel = CardViewModel()
-    
     var backView: CardView = CardView(frame: .zero)
     
     var currentDisplayView: CardView? {
@@ -56,6 +54,7 @@ class MainViewController: UIViewController {
         backView.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor, constant: GlobalVariables.CardViewIntervals.left.rawValue).isActive = true
         backView.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor, constant: GlobalVariables.CardViewIntervals.right.rawValue).isActive = true
         backView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: GlobalVariables.CardViewIntervals.bottom.rawValue).isActive = true
+        backView.infoView.albumName.delegate = self
         
         view.addSubview(frontView)
         frontView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: GlobalVariables.CardViewIntervals.top.rawValue).isActive = true
@@ -64,20 +63,21 @@ class MainViewController: UIViewController {
         frontView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: GlobalVariables.CardViewIntervals.bottom.rawValue).isActive = true
         //153, 219, 210
         frontView.backgroundColor = UIColor(red: 153/255, green: 219/255, blue: 210, alpha: 1)
+        frontView.infoView.albumName.delegate = self
     }
     
     private func setupViews() {
-        frontView.collectionView.dataSource = self.cardViewModel
         frontView.collectionView.delegate = self
         frontView.functionEnabled = false
         frontView.alpha = 0
         frontView.collectionView.tag = 1
+        frontView.model = CardViewModel()
         
-        backView.collectionView.dataSource = self.cardViewModel
         backView.collectionView.delegate = self
         backView.functionEnabled = false
         backView.alpha = 0
         backView.collectionView.tag = 2
+        backView.model = CardViewModel()
     }
     
     //MARK: action related methods
@@ -106,11 +106,11 @@ class MainViewController: UIViewController {
                     UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
                         display.transform = CGAffineTransform(rotationAngle: angle > 0 ? (CGFloat.pi / 4): -(CGFloat.pi / 4))
                         display.center.x = angle > 0 ? size.width + size.height / 2 : 0 - size.height / 2
+                        viewOnTheBack.alpha = 1
                     }, completion: {
                         if $0 {
                             display.transform = CGAffineTransform.identity
                             display.center = viewOnTheBack.center
-                            
                             self.view.insertSubview(display, belowSubview: viewOnTheBack)
                             self.currentDisplayView = viewOnTheBack
                         }
@@ -154,7 +154,11 @@ class MainViewController: UIViewController {
     func handleCloseTap(sender:UITapGestureRecognizer) {
         guard let display = currentDisplayView else { return }
         if sender == display.tapGestrue && !display.infoBackView.isHidden{
-            self.hideCardInfoView(for: display)
+            if display.infoView.albumName.isFirstResponder {
+                _ = self.textFieldShouldReturn(display.infoView.albumName)
+            }else {
+                self.hideCardInfoView(for: display)
+            }
         }
     }
     func handleOpenTap(sender:UITapGestureRecognizer) {
@@ -174,6 +178,8 @@ class MainViewController: UIViewController {
         display.infoView.albumName.isEnabled = !display.infoView.albumName.isEnabled
         if display.infoView.albumName.isEnabled {
             display.infoView.albumName.becomeFirstResponder()
+            display.functionEnabled = false
+            display.tapGestrue.isEnabled = true
         }
     }
     //MARK: Private helper methods
@@ -199,15 +205,15 @@ class MainViewController: UIViewController {
     
     private func panWithTouch(to point: CGPoint, for view:CardView) {
         view.infoBackView.isHidden = false
-            UIView.animate(withDuration: 0.1, animations: {
-                let height = GlobalVariables.cardInfoHeaderHeight
-                let expandHeight = view.bounds.size.height / 2
-                let alp = (height - point.y) / (expandHeight - height)
-                let const = height - point.y > expandHeight ? expandHeight : height - point.y
-                view.infoBackView.alpha = alp > 0.8 ? 0.8 : alp
-                view.infoHeightConstraint?.constant = const < height ? height : const
-                view.layoutIfNeeded()
-            })
+        let height = GlobalVariables.cardInfoHeaderHeight
+        let expandHeight = view.bounds.size.height / 2
+        let alp = (height - point.y) / (expandHeight - height)
+        let const = height - point.y > expandHeight ? expandHeight : height - point.y
+        UIView.animate(withDuration: 0.1, animations: {
+            view.infoBackView.alpha = alp > 0.8 ? 0.8 : alp
+            view.infoHeightConstraint?.constant = const < height ? height : const
+            view.layoutIfNeeded()
+        })
     }
     
     private func rotate(cardView: CardView, translationPoint translation: CGPoint) {
@@ -217,14 +223,14 @@ class MainViewController: UIViewController {
         UIView.animate(withDuration: 0.1) {
             cardView.transform = rotate
             cardView.center.x = self.view.center.x + translation.x
-            viewOntheBack.alpha = abs(translation.x) / self.view.bounds.size.width
+            viewOntheBack.alpha = abs(translation.x) * 2 / self.view.bounds.size.width
         }
     }
     
     internal func hideCardInfoView(for card:CardView) {
+        card.infoHeightConstraint?.constant = GlobalVariables.cardInfoHeaderHeight
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
             card.infoBackView.alpha = 0
-            card.infoHeightConstraint?.constant = GlobalVariables.cardInfoHeaderHeight
             card.layoutIfNeeded()
         }) { (success) in
             if success {
@@ -236,9 +242,9 @@ class MainViewController: UIViewController {
     
     internal func showCardInfoView(for card: CardView) {
         card.infoBackView.isHidden = false
+        card.infoHeightConstraint?.constant = card.bounds.size.height / 2
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
             card.infoBackView.alpha = 0.8
-            card.infoHeightConstraint?.constant = card.bounds.size.height / 2
             card.layoutIfNeeded()
         }) { (success) in
             card.collectionView.panGestureRecognizer.isEnabled = false
@@ -248,6 +254,24 @@ class MainViewController: UIViewController {
     //Helper methods
     private func cardView(under card: CardView) -> CardView {
         return card == frontView ? backView : frontView
+    }
+}
+
+extension MainViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField.isFirstResponder {
+            if let card = self.currentDisplayView {
+                card.functionEnabled = true
+            }
+            textField.resignFirstResponder()
+        }
+        return true
+    }
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let str = textField.text, str.isEmpty{
+            return !string.trimmingCharacters(in: CharacterSet.whitespaces).isEmpty
+        }
+        return true
     }
 }
 
@@ -270,8 +294,4 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDelegate
     }
 }
 
-extension UICollectionViewFlowLayout {
-    override open func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        return true
-    }
-}
+

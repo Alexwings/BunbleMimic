@@ -14,6 +14,7 @@ class CardInfoView: BaseView {
         txt.textAlignment = .center
         txt.text = "Hello World!"
         txt.isEnabled = false
+        txt.returnKeyType = .done
         txt.translatesAutoresizingMaskIntoConstraints = false
         return txt
     }()

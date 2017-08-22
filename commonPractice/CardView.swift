@@ -72,7 +72,15 @@ class CardView: BaseView {
         }
     }
     
-    
+    //MARK: Model
+    var model: CardViewModel? {
+        didSet {
+            if model != oldValue {
+                self.collectionView.dataSource = model
+                self.collectionView.reloadData()
+            }
+        }
+    }
     
     //MARK: views
     let collectionView: UICollectionView = {

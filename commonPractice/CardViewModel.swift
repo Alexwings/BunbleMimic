@@ -58,3 +58,8 @@ extension CardViewModel: UICollectionViewDataSource {
         return cell
     }
 }
+extension UICollectionViewFlowLayout {
+    override open func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return true
+    }
+}
