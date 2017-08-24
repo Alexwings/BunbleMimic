@@ -29,7 +29,7 @@ class CardView: BaseView {
         clipsToBounds = true
         addGestureRecognizer(panGesture)
         addGestureRecognizer(tapGestrue)
-        tapGestrue.require(toFail: infoView.doubleTap)
+        infoView.singleTapGuesture.require(toFail: infoView.doubleTap)
         
         collectionView.backgroundColor = UIColor.clear
         addSubview(collectionView)
@@ -52,7 +52,8 @@ class CardView: BaseView {
         infoHeightConstraint = infoView.heightAnchor.constraint(equalToConstant: GlobalVariables.cardInfoHeaderHeight)
         infoHeightConstraint?.isActive = true
         
-        
+        tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
+        infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
     }
     
     //MARK:constraints
@@ -126,4 +127,49 @@ class CardView: BaseView {
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
     }()
+    
+    //MARK: self handling methods
+    internal func hideCardInfoView() {
+        infoHeightConstraint?.constant = GlobalVariables.cardInfoHeaderHeight
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
+            self.infoBackView.alpha = 0
+            self.layoutIfNeeded()
+        }) { (success) in
+            if success {
+                self.infoBackView.isHidden = true
+                self.collectionView.panGestureRecognizer.isEnabled = true
+            }
+        }
+    }
+    
+    internal func showCardInfoView() {
+        self.infoBackView.isHidden = false
+        self.infoHeightConstraint?.constant = self.bounds.size.height / 2
+        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
+            self.infoBackView.alpha = 0.8
+            self.layoutIfNeeded()
+        }) { (success) in
+            self.collectionView.panGestureRecognizer.isEnabled = false
+        }
+    }
+    
+    func handleCloseTap(sender:UITapGestureRecognizer) {
+        if sender == tapGestrue && !infoBackView.isHidden{
+            if infoView.albumName.isFirstResponder {
+                _ = infoView.albumName.delegate?.textFieldShouldReturn?(infoView.albumName)
+            }else {
+                showCardInfoView()
+            }
+        }
+    }
+    
+    func handleOpenTap(sender:UITapGestureRecognizer) {
+        if sender == infoView.singleTapGuesture{
+            if infoBackView.isHidden {
+                showCardInfoView()
+            }else {
+                hideCardInfoView()
+            }
+        }
+    }
 }

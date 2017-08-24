@@ -137,40 +137,21 @@ class MainViewController: UIViewController {
                 panWithTouch(to: translation, for: display)
                 break
             }
-            showCardInfoView(for: display)
+            display.showCardInfoView()
             break
         case .ended, .failed, .cancelled:
             display.panGesture.isEnabled = true
             if vel.y < 0 {
-                showCardInfoView(for: display)
+                display.showCardInfoView()
             }else {
-                hideCardInfoView(for: display)
+                display.hideCardInfoView()
             }
         default:
             break
         }
     }
     
-    func handleCloseTap(sender:UITapGestureRecognizer) {
-        guard let display = currentDisplayView else { return }
-        if sender == display.tapGestrue && !display.infoBackView.isHidden{
-            if display.infoView.albumName.isFirstResponder {
-                _ = self.textFieldShouldReturn(display.infoView.albumName)
-            }else {
-                self.hideCardInfoView(for: display)
-            }
-        }
-    }
-    func handleOpenTap(sender:UITapGestureRecognizer) {
-        guard let display = currentDisplayView else { return }
-        if sender == display.infoView.singleTapGuesture{
-            if display.infoBackView.isHidden {
-                self.showCardInfoView(for: display)
-            }else {
-                self.hideCardInfoView(for: display)
-            }
-        }
-    }
+    
     
     @objc func enableTextField(sender: UITapGestureRecognizer) {
         guard let display = currentDisplayView else { return }
@@ -186,19 +167,14 @@ class MainViewController: UIViewController {
     
     private func disableGestures(for card: CardView?) {
         guard let card = card else { return }
-        card.panGesture.removeTarget(self, action: #selector(handleGesture(gesture:)))
-        card.tapGestrue.removeTarget(self, action: #selector(handleCloseTap(sender:)))
         card.infoView.doubleTap.removeTarget(self, action: #selector(enableTextField(sender:)))
-        card.infoView.singleTapGuesture.removeTarget(self, action: #selector(handleOpenTap(sender:)))
         card.collectionView.panGestureRecognizer.removeTarget(self, action: #selector(handleInfoPan(sender:)))
     }
     
     private func enableGestures(for card: CardView?) {
         guard let card = card else { return }
         card.panGesture.addTarget(self, action: #selector(handleGesture(gesture:)))
-        card.tapGestrue.addTarget(self, action: #selector(handleCloseTap(sender:)))
         card.infoView.doubleTap.addTarget(self, action: #selector(enableTextField(sender:)))
-        card.infoView.singleTapGuesture.addTarget(self, action: #selector(handleOpenTap(sender:)))
         card.collectionView.panGestureRecognizer.addTarget(self, action: #selector(handleInfoPan(sender:)))
     }
     //MARK: animations
@@ -227,29 +203,9 @@ class MainViewController: UIViewController {
         }
     }
     
-    internal func hideCardInfoView(for card:CardView) {
-        card.infoHeightConstraint?.constant = GlobalVariables.cardInfoHeaderHeight
-        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
-            card.infoBackView.alpha = 0
-            card.layoutIfNeeded()
-        }) { (success) in
-            if success {
-                card.infoBackView.isHidden = true
-                card.collectionView.panGestureRecognizer.isEnabled = true
-            }
-        }
-    }
+   
     
-    internal func showCardInfoView(for card: CardView) {
-        card.infoBackView.isHidden = false
-        card.infoHeightConstraint?.constant = card.bounds.size.height / 2
-        UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
-            card.infoBackView.alpha = 0.8
-            card.layoutIfNeeded()
-        }) { (success) in
-            card.collectionView.panGestureRecognizer.isEnabled = false
-        }
-    }
+    
     
     //Helper methods
     private func cardView(under card: CardView) -> CardView {
