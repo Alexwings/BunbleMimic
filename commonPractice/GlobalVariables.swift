@@ -20,4 +20,6 @@ struct GlobalVariables {
     static let cardInfoHeaderHeight: CGFloat = 80
     static let dismissVelocity: CGFloat = 3000
     static let virticalVelocity: CGFloat = 1000
+    
+    static let thumbnailSize: CGSize = CGSize(width: 200, height: 200)
 }
