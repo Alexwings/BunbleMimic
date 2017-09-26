@@ -13,9 +13,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        //TODO: create splash view, ask for photo access permission in the splash view.
+        _ = SimpleImageManager.shared
         let viewController = MainViewController()
         viewController.view.backgroundColor = UIColor.white
         window = UIWindow(frame: UIScreen.main.bounds)

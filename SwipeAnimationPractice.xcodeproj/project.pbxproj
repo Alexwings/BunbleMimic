@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7D03CCEC1F3E676B0097A066 /* testImage in Resources */ = {isa = PBXBuildFile; fileRef = 7D03CCEB1F3E676B0097A066 /* testImage */; };
 		7D5350111F328336001419E4 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D5350101F328336001419E4 /* CardView.swift */; };
 		7DA9FE9A1F3277D500D2A0F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9FE991F3277D500D2A0F7 /* AppDelegate.swift */; };
 		7DA9FE9C1F3277D500D2A0F7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA9FE9B1F3277D500D2A0F7 /* MainViewController.swift */; };
@@ -20,11 +19,10 @@
 		E81E5CC31F4BCB4300E45FF1 /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E81E5CC21F4BCB4300E45FF1 /* PhotosUI.framework */; };
 		E83021681F5340F70025E4AA /* SimpleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E83021671F5340F70025E4AA /* SimpleImage.swift */; };
 		E843DAA51F3E893F00AD4259 /* CardInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E843DAA41F3E893F00AD4259 /* CardInfoView.swift */; };
-		E88C4B551F50C94B00490A07 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88C4B541F50C94B00490A07 /* MainViewModel.swift */; };
+		E88C4B551F50C94B00490A07 /* SimpleImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E88C4B541F50C94B00490A07 /* SimpleImageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7D03CCEB1F3E676B0097A066 /* testImage */ = {isa = PBXFileReference; lastKnownFileType = folder; path = testImage; sourceTree = "<group>"; };
 		7D5350101F328336001419E4 /* CardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		7DA9FE961F3277D500D2A0F7 /* SwipeAnimationPractice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeAnimationPractice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DA9FE991F3277D500D2A0F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -40,7 +38,7 @@
 		E81E5CC21F4BCB4300E45FF1 /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
 		E83021671F5340F70025E4AA /* SimpleImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleImage.swift; sourceTree = "<group>"; };
 		E843DAA41F3E893F00AD4259 /* CardInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardInfoView.swift; sourceTree = "<group>"; };
-		E88C4B541F50C94B00490A07 /* MainViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
+		E88C4B541F50C94B00490A07 /* SimpleImageManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleImageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +87,6 @@
 		7DA9FEAB1F327BCB00D2A0F7 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				7D03CCEB1F3E676B0097A066 /* testImage */,
 				7DA9FEA01F3277D500D2A0F7 /* Assets.xcassets */,
 				7DA9FEA21F3277D500D2A0F7 /* LaunchScreen.storyboard */,
 				7DA9FEA51F3277D500D2A0F7 /* Info.plist */,
@@ -123,7 +120,7 @@
 				7DE8BC571F351C1700BA8755 /* CardViewModel.swift */,
 				7DFC08B61F38F00700EF89D9 /* CardViewImageCell.swift */,
 				E843DAA41F3E893F00AD4259 /* CardInfoView.swift */,
-				E88C4B541F50C94B00490A07 /* MainViewModel.swift */,
+				E88C4B541F50C94B00490A07 /* SimpleImageManager.swift */,
 			);
 			name = "Views&ViewModels";
 			sourceTree = "<group>";
@@ -163,12 +160,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Xinyuan Wang";
 				TargetAttributes = {
 					7DA9FE951F3277D500D2A0F7 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 9D66GMA8D3;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -196,7 +194,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D03CCEC1F3E676B0097A066 /* testImage in Resources */,
 				7DA9FEA41F3277D500D2A0F7 /* LaunchScreen.storyboard in Resources */,
 				7DA9FEA11F3277D500D2A0F7 /* Assets.xcassets in Resources */,
 			);
@@ -217,7 +214,7 @@
 				E843DAA51F3E893F00AD4259 /* CardInfoView.swift in Sources */,
 				7DFC08B71F38F00700EF89D9 /* CardViewImageCell.swift in Sources */,
 				7DA9FE9A1F3277D500D2A0F7 /* AppDelegate.swift in Sources */,
-				E88C4B551F50C94B00490A07 /* MainViewModel.swift in Sources */,
+				E88C4B551F50C94B00490A07 /* SimpleImageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,7 +242,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -253,7 +252,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -282,6 +285,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -295,7 +299,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -303,7 +309,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -324,6 +334,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -336,10 +347,11 @@
 				DEVELOPMENT_TEAM = 9D66GMA8D3;
 				INFOPLIST_FILE = commonPractice/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.SwipeAnimationPractice;
+				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.SwipeAlbums;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -351,10 +363,11 @@
 				DEVELOPMENT_TEAM = 9D66GMA8D3;
 				INFOPLIST_FILE = commonPractice/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.SwipeAnimationPractice;
+				PRODUCT_BUNDLE_IDENTIFIER = alex.learning.SwipeAlbums;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

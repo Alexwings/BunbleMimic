@@ -78,7 +78,7 @@ class CardView: BaseView {
         didSet {
             if model != oldValue {
                 self.collectionView.dataSource = model
-                self.collectionView.reloadData()
+                self.reloadData()
             }
         }
     }
@@ -129,6 +129,15 @@ class CardView: BaseView {
     }()
     
     //MARK: self handling methods
+    func reloadData() {
+        guard let model = self.model else { return }
+        self.infoView.albumName.text = model.title
+        let fmt = DateFormatter()
+        fmt.dateFormat = "MM-dd-yyyy"
+        let date = model.creationDate ?? Date()
+        self.infoView.timeLabel.text = fmt.string(from: date)
+        self.collectionView.reloadData()
+    }
     internal func hideCardInfoView() {
         infoHeightConstraint?.constant = GlobalVariables.cardInfoHeaderHeight
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: {
@@ -153,17 +162,17 @@ class CardView: BaseView {
         }
     }
     
-    func handleCloseTap(sender:UITapGestureRecognizer) {
+    @objc func handleCloseTap(sender:UITapGestureRecognizer) {
         if sender == tapGestrue && !infoBackView.isHidden{
             if infoView.albumName.isFirstResponder {
                 _ = infoView.albumName.delegate?.textFieldShouldReturn?(infoView.albumName)
             }else {
-                showCardInfoView()
+                hideCardInfoView()
             }
         }
     }
     
-    func handleOpenTap(sender:UITapGestureRecognizer) {
+    @objc func handleOpenTap(sender:UITapGestureRecognizer) {
         if sender == infoView.singleTapGuesture{
             if infoBackView.isHidden {
                 showCardInfoView()

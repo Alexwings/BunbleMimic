@@ -14,45 +14,36 @@ class SimpleImage: NSObject {
     
     private let asset: PHAsset
     
-    let size: CGSize
-    
     let lastModificationDate: Date
     
-    lazy var image: UIImage? = { [unowned self] in
-        let manager = PHImageManager.default()
-        let requestOptions = PHImageRequestOptions()
-        requestOptions.deliveryMode = .highQualityFormat
-        requestOptions.isSynchronous = true
-        //request image
-        _ = manager.requestImage(for: self.asset, targetSize: self.size, contentMode: .aspectFill, options: requestOptions, resultHandler: { (img, info) in
-            if let error = info?[PHImageErrorKey] as? NSError {
-                print("Error: \(error.description)")
-                return
-            }
-            self.image = img
-        })
-        return nil
-    }()
+    var image: UIImage = #imageLiteral(resourceName: "placeholder")
     
-    lazy var thumbnail: UIImage? = { [unowned self] in
-        let manager = PHImageManager.default()
-        let requestOptions = PHImageRequestOptions()
-        requestOptions.deliveryMode = .fastFormat
-        requestOptions.isSynchronous = true
-        _ = manager.requestImage(for: self.asset, targetSize: GlobalVariables.thumbnailSize, contentMode: .aspectFill, options: requestOptions, resultHandler: { (img, info) in
-            guard info?[PHImageErrorKey] == nil else {
-                let error = info![PHImageErrorKey]
-                print("Error: \(error.debugDescription)"); return
-            }
-            self.thumbnail = img ?? #imageLiteral(resourceName: "placeholder")
-        })
-        return #imageLiteral(resourceName: "placeholder")
-    }()
+    var imageLoaded: Bool = false
     
-    init(asset a:PHAsset, size: CGSize) {
+    init(asset a:PHAsset) {
         asset = a
-        self.size = size
         self.lastModificationDate = a.modificationDate ?? a.creationDate ?? Date()
         super.init()
+        self.load(for: a)
+    }
+    
+    internal func load(for asset: PHAsset) {
+        self.imageLoaded = false
+        let options = PHImageRequestOptions()
+        options.deliveryMode = .highQualityFormat
+        options.isSynchronous = true
+        options.version = .current
+        options.resizeMode = .exact
+        let size = CGSize(width: asset.pixelWidth / 2, height: asset.pixelHeight / 2)
+        PHImageManager.default().requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: options) { (image, info) in
+            if let error = info?[PHImageErrorKey] as? NSError {
+                print(error.description)
+                return
+            }
+            guard let img = image else { return }
+            self.image = img
+            self.imageLoaded = true
+        }
+            
     }
 }

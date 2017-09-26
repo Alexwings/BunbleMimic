@@ -8,13 +8,10 @@
 
 import UIKit
 import QuartzCore
+import Photos
 
 enum CellTypes: String {
     case imageCell = "imageCell"
-}
-
-enum CardZPosition: CGFloat {
-    case back = 0, front = 1
 }
 
 class MainViewController: UIViewController {
@@ -23,7 +20,7 @@ class MainViewController: UIViewController {
     
     var backView: CardView = CardView(frame: .zero)
     
-    var currentDisplayView: CardView? {
+    @objc dynamic var currentDisplayView: CardView? {
         didSet {
             guard currentDisplayView != oldValue, let display = currentDisplayView else { return }
             let back = self.cardView(under: display)
@@ -34,15 +31,34 @@ class MainViewController: UIViewController {
             
             disableGestures(for: back)
             back.functionEnabled = false
+            let totalCount = SimpleImageManager.shared.count
+            var moveIndex = self.backAlbumIndex
+            if self.isMoveForward {
+                moveIndex = (moveIndex > totalCount - 2) ? 0 : (moveIndex + 1)
+            }else {
+                moveIndex = (moveIndex < 1) ? totalCount - 1 : moveIndex - 1
+            }
+            self.backAlbumIndex = moveIndex
         }
     }
-    
+    private var observation: NSKeyValueObservation?
+    private var isMoveForward: Bool = true
+    var backAlbumIndex:SimpleImageManager.Index = 1;
     //MARK: Controller Life Cycle related methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLayouts()
         setupViews()
+        let manager = SimpleImageManager.shared
         currentDisplayView = frontView
+        guard  let result = manager.fetchCollection(at: 0) else { return }
+        let frontModel = CardViewModel(with: result, from: self)
+        frontModel.managedView = self.frontView
+        self.frontView.model = frontModel
+        guard let backResult = manager.fetchCollection(at: self.backAlbumIndex) else { return }
+        let backModel = CardViewModel(with: backResult, from: self)
+        backModel.managedView = self.backView
+        self.backView.model = backModel
     }
 
     private func setupLayouts() {
@@ -71,18 +87,16 @@ class MainViewController: UIViewController {
         frontView.functionEnabled = false
         frontView.alpha = 0
         frontView.collectionView.tag = 1
-        frontView.model = CardViewModel()
         
         backView.collectionView.delegate = self
         backView.functionEnabled = false
         backView.alpha = 0
         backView.collectionView.tag = 2
-        backView.model = CardViewModel()
     }
     
     //MARK: action related methods
     
-    func handleGesture(gesture: UIPanGestureRecognizer) {
+    @objc func handleGesture(gesture: UIPanGestureRecognizer) {
         guard let display = currentDisplayView else { return }
         let viewOnTheBack = self.cardView(under: display)
         let velocity = gesture.velocity(in: self.view)
@@ -107,11 +121,12 @@ class MainViewController: UIViewController {
                         display.transform = CGAffineTransform(rotationAngle: angle > 0 ? (CGFloat.pi / 4): -(CGFloat.pi / 4))
                         display.center.x = angle > 0 ? size.width + size.height / 2 : 0 - size.height / 2
                         viewOnTheBack.alpha = 1
-                    }, completion: {
+                    }, completion: {[unowned self] in
                         if $0 {
                             display.transform = CGAffineTransform.identity
                             display.center = viewOnTheBack.center
                             self.view.insertSubview(display, belowSubview: viewOnTheBack)
+                            self.isMoveForward = angle > 0
                             self.currentDisplayView = viewOnTheBack
                         }
                     })
@@ -123,7 +138,7 @@ class MainViewController: UIViewController {
         }
     }
     
-    func handleInfoPan(sender: UIPanGestureRecognizer) {
+    @objc func handleInfoPan(sender: UIPanGestureRecognizer) {
         guard let display = currentDisplayView else { return }
         let scrollView = display.collectionView
         guard scrollView.contentOffset.y + scrollView.bounds.size.height >= scrollView.contentSize.height else { return }
@@ -202,11 +217,6 @@ class MainViewController: UIViewController {
             viewOntheBack.alpha = abs(translation.x) * 2 / self.view.bounds.size.width
         }
     }
-    
-   
-    
-    
-    
     //Helper methods
     private func cardView(under card: CardView) -> CardView {
         return card == frontView ? backView : frontView
